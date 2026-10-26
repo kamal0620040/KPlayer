@@ -1,0 +1,35 @@
+:root {
+  /* Surfaces */
+  --bg: #08080a; /* app background, near-black */
+  --panel: #121214; /* panels / guide background */
+  --surface: #232326; /* raised surface */
+  --surface-2: #333338; /* borders / chips */
+  --surface-3: #1c1c1f;
+  --card: #171b22; /* media / info card surface */
+  --card-high: #1d222b; /* card highlight for gradients */
+  --card-line: rgba(255, 255, 255, 0.08);
+
+  /* Accent */
+  --accent: #4f8dff;
+  --accent-soft: rgba(79, 141, 255, 0.35);
+  --focus-row: #242428; /* focused row background */
+  --focus-row-2: #1b1b1e; /* selected row background */
+  --focus-edge: #3a3a40;
+
+  /* Text */
+  --text: #f5f5f7;
+  --text-2: #a5a5ac; /* secondary text */
+  --text-3: #6e6e75; /* hints / disabled */
+  --now-line: #4f8dff; /* EPG now-line */
+
+  /* Geometry — 1080-line design space. Width-based scaling keeps the layout
+     stable when the on-screen keyboard temporarily reduces viewport height. */
+  --u: 0.0520833333vw;
+  --rail-w: calc(540 * var(--u)); /* channel list panel width */
+  --row-h: calc(76 * var(--u)); /* channel row height */
+  --epg-row-h: calc(84 * var(--u)); /* EPG grid channel row height */
+  --radius: calc(6 * var(--u));
+  --radius-card: calc(14 * var(--u)); /* current UI card radius (Play refs) */
+  --focus-white: #f5f5f5; /* list focus pill (Play refs play-4/5) */
+  --panel-alpha: rgba(13, 16, 20, 0.92);
+}

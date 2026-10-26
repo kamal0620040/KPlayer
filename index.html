@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+<title>KPlayer</title>
+<meta name="description" content="KPlayer — live TV, guide, movies and series for Samsung Tizen."/>
+<link rel="stylesheet" href="css/tokens.css"/>
+<link rel="stylesheet" href="css/app.css"/>
+</head>
+<body>
+  <!-- Player view (fullscreen video; AVPlay attaches here on Tizen) -->
+  <div id="view-player" class="view active">
+    <!-- AVPlay surface is injected by app.js only when webapis exists (Tizen);
+         desktop browsers would otherwise paint a plugin placeholder. -->
+    <div id="av-holder"></div>
+    <div id="player-placeholder">
+      <div class="ph-brand"></div>
+      <div class="ph-title" id="ph-title"></div>
+      <div class="ph-sub" id="ph-sub"></div>
+    </div>
+    <div id="player-status" class="hidden">
+      <div id="ps-title"></div>
+      <div id="ps-detail"></div>
+    </div>
+    <div id="seek-toast" class="hidden"></div>
+    <div id="av-panel" class="hidden">
+      <div class="av-head">Audio &amp; video</div>
+      <div id="av-rows"></div>
+      <div class="av-foot">OK / ◀ ▶ change · Back close</div>
+    </div>
+    <!-- Player bottom panel (ref play-1) -->
+    <div id="info-bar" class="hidden">
+      <div class="pb-top">
+        <div class="pb-logo" id="ib-logo">TV</div>
+        <div class="pb-main">
+          <div class="pb-title" id="ib-now">Programme</div>
+          <div class="pb-meta">
+            <span id="ib-range">00:00 - 00:00</span>
+            <span class="pb-progress"><span id="ib-progress-fill"></span></span>
+            <span id="ib-remain">0 min</span>
+            <span id="ib-paused" class="pb-badge pb-badge-paused hidden">PAUSED</span>
+            <span class="pb-badge">HD</span>
+            <span class="pb-badge">STEREO</span>
+          </div>
+        </div>
+        <div class="pb-clock" id="ib-clock">00:00</div>
+      </div>
+      <div class="pb-cards" id="pb-cards"></div>
+    </div>
+  </div>
+
+  <!-- Channel list overlay (OK while watching) -->
+  <div id="view-channels" class="view hidden">
+    <div class="side-panel">
+      <div class="side-head">
+        <div class="side-group" id="ch-group-name">All channels</div>
+        <div class="side-clock" id="ch-clock">00:00</div>
+      </div>
+      <div id="channel-list"></div>
+    </div>
+    <div class="side-preview">
+      <div class="ch-preview-video" id="pv-video-logo">
+        <div class="pv-logo-slot" id="pv-logo-slot">TV</div>
+        <div class="pv-empty hidden" id="pv-empty">
+          <div class="pv-empty-ico" id="pv-empty-ico"></div>
+          <div class="pv-empty-title" id="pv-empty-title"></div>
+          <div class="pv-empty-desc" id="pv-empty-desc"></div>
+        </div>
+      </div>
+      <div class="ch-preview-info">
+        <div class="pv-title" id="pv-title">Programme title</div>
+        <div class="pv-time" id="pv-time">00:00 - 00:00</div>
+        <div class="pv-desc" id="pv-desc"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Guide, preview mode (ref play-2): icon rail + panel + preview + rows -->
+  <div id="view-guide" class="view hidden">
+    <div class="rail">
+      <div class="rail-ico" data-r="search" title="Search"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m16.6 16.6 4.4 4.4"/></svg><span class="rail-lbl">Search</span></div>
+      <div class="rail-ico" data-r="playlists" title="Playlists"><svg viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h10"/></svg><span class="rail-lbl">Playlists</span></div>
+      <div class="rail-ico" data-r="tv" title="Live TV"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="13" rx="2"/><path d="M8 21h8"/></svg><span class="rail-lbl">Live TV</span></div>
+      <div class="rail-ico" data-r="movies" title="Movies"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M7 4v16M17 4v16M3 9h4M3 15h4M17 9h4M17 15h4"/></svg><span class="rail-lbl">Movies</span></div>
+      <div class="rail-ico" data-r="shows" title="Series"><svg viewBox="0 0 24 24"><rect x="3" y="7" width="18" height="14" rx="2"/><path d="M8 7V3h8v4M3 12h18"/></svg><span class="rail-lbl">Series</span></div>
+      <div class="rail-ico" data-r="mylist" title="My list"><svg viewBox="0 0 24 24"><path d="M6 4h12v17l-6-4-6 4z"/></svg><span class="rail-lbl">My list</span></div>
+      <div class="rail-ico" data-r="settings" title="Settings"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.9l.1.1-2.8 2.8-.1-.1a1.7 1.7 0 0 0-1.9-.3 1.7 1.7 0 0 0-1 1.6v.2h-4v-.2a1.7 1.7 0 0 0-1-1.6 1.7 1.7 0 0 0-1.9.3l-.1.1-2.8-2.8.1-.1A1.7 1.7 0 0 0 4.6 15a1.7 1.7 0 0 0-1.6-1H2.8v-4H3a1.7 1.7 0 0 0 1.6-1 1.7 1.7 0 0 0-.3-1.9l-.1-.1 2.8-2.8.1.1a1.7 1.7 0 0 0 1.9.3A1.7 1.7 0 0 0 10 2.8v-.2h4v.2a1.7 1.7 0 0 0 1 1.6 1.7 1.7 0 0 0 1.9-.3l.1-.1 2.8 2.8-.1.1a1.7 1.7 0 0 0-.3 1.9 1.7 1.7 0 0 0 1.6 1h.2v4H21a1.7 1.7 0 0 0-1.6 1z"/></svg><span class="rail-lbl">Settings</span></div>
+    </div>
+    <div class="gpanel">
+      <div class="gpanel-playlist" title="Switch playlist"><span id="guide-pl-name">Playlist</span><span class="chev" id="guide-pl-chev"></span></div>
+      <div id="guide-groups"></div>
+    </div>
+    <div class="gmain">
+      <div class="gpreview">
+        <div class="gp-video"><span id="gp-video-logo">TV</span></div>
+        <div class="gp-info">
+          <div class="gp-title" id="gp-title">Programme</div>
+          <div class="gp-meta"><span id="gp-range">00:00 - 00:00</span>
+            <span class="pb-progress"><span id="gp-prog"></span></span>
+            <span id="gp-remain">0 min</span></div>
+          <div class="gp-desc" id="gp-desc"></div>
+        </div>
+      </div>
+      <div class="gbody">
+        <div class="gdatebar">
+          <div class="gdate" id="guide-date"></div>
+          <div class="gtimes" id="guide-times"></div>
+        </div>
+        <div class="grows" id="guide-rows"><div class="grows-inner" id="guide-rows-inner"></div></div>
+        <div class="gnowline" id="guide-nowline"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Schedule / catch-up for one channel (ref play-4) -->
+  <div id="view-schedule" class="view hidden">
+    <div class="sched-left">
+      <div class="sched-head"><span id="sched-logo">TV</span><span id="sched-name">Channel</span></div>
+      <div id="sched-list"></div>
+    </div>
+    <div class="sched-days" id="sched-days"></div>
+    <div class="sched-right">
+      <div class="sched-preview" id="sched-preview-logo">TV</div>
+      <div class="sched-info">
+        <div class="sched-info-title" id="sched-info-title">Programme</div>
+        <div class="sched-info-time" id="sched-info-time"></div>
+        <div class="sched-info-desc" id="sched-info-desc"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- VOD browse (Movies / Shows / My list) -->
+  <div id="view-vod" class="view hidden">
+    <div class="vod-cats" id="vod-cats"><div class="vod-cat-list" id="vod-cat-list"></div></div>
+    <div class="vod-main">
+      <div class="vod-title" id="vod-title">Movies</div>
+      <div class="vod-scroll"><div class="vod-grid" id="vod-grid"></div></div>
+      <div class="vod-empty hidden" id="vod-empty">Nothing here yet</div>
+    </div>
+  </div>
+
+  <!-- VOD detail -->
+  <div id="view-voddetail" class="view hidden">
+    <div class="vd-poster" id="vd-poster">?</div>
+    <div class="vd-main">
+      <div class="vd-title" id="vd-title">Title</div>
+      <div class="vd-meta" id="vd-meta"></div>
+      <div class="vd-desc" id="vd-desc"></div>
+      <div class="vd-actions" id="vd-actions"></div>
+      <div class="vd-seasons hidden" id="vd-seasons"></div>
+      <div class="vd-episodes" id="vd-episodes"></div>
+    </div>
+  </div>
+
+  <!-- Settings -->
+  <div id="view-settings" class="view hidden">
+    <div class="set-sections" id="set-sections"></div>
+    <div class="set-main">
+      <div class="set-title" id="set-title">Settings</div>
+      <div id="set-rows"></div>
+      <div id="set-extra"></div>
+    </div>
+  </div>
+
+  <!-- PIN overlay -->
+  <div id="pin-overlay" class="hidden">
+    <div class="pin-box">
+      <div class="pin-title" id="pin-title">Enter PIN</div>
+      <div class="pin-dots" id="pin-dots"></div>
+      <div class="pin-msg" id="pin-msg"></div>
+      <div class="pin-pad" id="pin-pad"></div>
+    </div>
+  </div>
+
+  <!-- Playlists -->
+  <div id="view-playlists" class="view hidden">
+    <div class="pl-shell">
+      <div class="pl-head">
+        <h1 class="pl-title">Playlists</h1>
+      </div>
+      <div id="pl-list" class="pl-list" role="list"></div>
+    </div>
+
+    <div id="pl-addflow" class="pl-flow hidden" role="dialog" aria-modal="true" aria-labelledby="pl-flow-title">
+      <div class="pl-flow-inner">
+        <div class="pl-flow-head">
+          <div class="pl-flow-head-main">
+            <div class="pl-flow-step" id="pl-flow-step">Add playlist</div>
+            <h2 class="pl-flow-title" id="pl-flow-title">Choose a source</h2>
+          </div>
+          <button id="pl-flow-back" class="pl-flow-back" type="button" tabindex="-1" aria-label="Back">
+            <span class="pl-flow-back-ico" data-pl-icon="back"></span><span>Back</span>
+          </button>
+        </div>
+
+        <div class="pl-choice-grid" id="pl-type-list">
+          <div class="pl-choice" data-type="m3u" role="button">
+            <span class="pl-choice-ico" data-pl-icon="link"></span>
+            <span class="pl-choice-main"><span class="pl-choice-name">M3U link</span><span class="pl-choice-sub">Paste a playlist URL</span></span>
+          </div>
+          <div class="pl-choice" data-type="xtream" role="button">
+            <span class="pl-choice-ico" data-pl-icon="key"></span>
+            <span class="pl-choice-main"><span class="pl-choice-name">Xtream login</span><span class="pl-choice-sub">Server and account details</span></span>
+          </div>
+          <div class="pl-choice" data-type="json" role="button">
+            <span class="pl-choice-ico" data-pl-icon="playlist"></span>
+            <span class="pl-choice-main"><span class="pl-choice-name">JSON list</span><span class="pl-choice-sub">Choose from a shared list</span></span>
+          </div>
+        </div>
+
+        <div id="pl-addform" class="pl-addform hidden">
+          <div class="pl-form-fields">
+            <label class="pl-field" data-field="plf-name"><span>Name</span><input id="plf-name" type="text" autocomplete="off" spellcheck="false" placeholder="Optional" /></label>
+            <label class="pl-field" data-field="plf-url"><span id="plf-url-label">Playlist URL</span><input id="plf-url" type="text" autocomplete="off" spellcheck="false" placeholder="https://provider.example/playlist.m3u" /></label>
+            <label class="pl-field pl-xt-field" data-field="plf-user"><span>Username</span><input id="plf-user" type="text" autocomplete="off" spellcheck="false" /></label>
+            <label class="pl-field pl-xt-field" data-field="plf-pass"><span>Password</span><input id="plf-pass" type="password" /></label>
+            <label class="pl-field" data-field="plf-epg"><span>EPG link</span><input id="plf-epg" type="text" autocomplete="off" spellcheck="false" placeholder="Optional" /></label>
+          </div>
+          <div class="pl-inline" id="plf-msg" role="status"></div>
+          <div class="pl-form-actions">
+            <button id="plf-add" class="pl-button primary" type="button">Add playlist</button>
+          </div>
+        </div>
+
+        <div id="pl-json-panel" class="pl-json-panel hidden">
+          <div class="pl-json-source">
+            <label class="pl-field" data-field="plf-json"><span>JSON link</span><input id="plf-json" type="text" autocomplete="off" spellcheck="false" placeholder="https://example.com/playlists.json" /></label>
+            <button id="plj-load" class="pl-button quiet" type="button">Load list</button>
+          </div>
+          <div class="pl-inline" id="plj-msg" role="status"></div>
+          <div id="pl-json-list" class="pl-json-list"></div>
+          <div class="pl-form-actions">
+            <button id="plj-add" class="pl-button primary" type="button">Add selected</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="pl-modal" class="pl-modal hidden">
+      <div id="pl-scrim" class="pl-scrim"></div>
+      <div id="pl-sheet" class="pl-sheet hidden" role="dialog" aria-modal="true" aria-labelledby="pl-sheet-title">
+        <div class="pl-sheet-title" id="pl-sheet-title"></div>
+        <div class="pl-sheet-options" id="pl-sheet-options"></div>
+      </div>
+      <div id="pl-dialog" class="pl-dialog hidden" role="dialog" aria-modal="true" aria-labelledby="pl-dialog-title">
+        <div class="pl-dialog-title" id="pl-dialog-title"></div>
+        <div class="pl-dialog-text" id="pl-dialog-text"></div>
+        <div class="pl-dialog-field hidden" id="pl-dialog-field">
+          <input id="pl-dialog-input" type="text" autocomplete="off" spellcheck="false" />
+        </div>
+        <div class="pl-inline" id="pl-dialog-msg" role="status"></div>
+        <div class="pl-dialog-actions" id="pl-dialog-actions"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Search (ref play-3) -->
+  <div id="view-search" class="view hidden">
+    <div class="search-scope-bar">
+      <span class="search-scope-lbl">Search in</span>
+      <div class="search-scopes" id="search-scopes">
+        <span class="search-scope sel" data-scope="all">All</span>
+        <span class="search-scope" data-scope="tv">Live TV</span>
+        <span class="search-scope" data-scope="movies">Movies</span>
+        <span class="search-scope" data-scope="series">Series</span>
+      </div>
+    </div>
+    <div class="search-top">
+      <div class="search-ico"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m16.6 16.6 4.4 4.4"/></svg></div>
+      <div class="search-field"><input id="search-input" type="text" autocomplete="off" spellcheck="false" placeholder="Search channels, movies and shows" /></div>
+    </div>
+    <div class="search-idle" id="search-idle">Type a name to search live TV, movies and series</div>
+    <div class="search-results hidden" id="search-results">
+      <div class="search-section" data-sec="channels">Channels</div>
+      <div class="search-row" id="search-channels"></div>
+      <div class="search-section" data-sec="vod">Movies &amp; shows</div>
+      <div class="search-row" id="search-vod"></div>
+      <div class="search-section" data-sec="progs">Programmes</div>
+      <div class="search-row" id="search-progs"></div>
+    </div>
+  </div>
+
+  <!-- Left main menu (ref play-6) -->
+  <div id="view-menu" class="hidden">
+    <div class="menu-logo"></div>
+    <div class="menu-item" data-act="guide">TV guide</div>
+    <div class="menu-item" data-act="search">Search</div>
+    <div class="menu-item focused" data-act="tv">TV</div>
+    <div class="menu-item" data-act="movies">Movies</div>
+    <div class="menu-item" data-act="shows">Shows</div>
+    <div class="menu-item" data-act="playlists">Playlists</div>
+    <div class="menu-item" data-act="mylist">My list</div>
+    <div class="menu-item" data-act="settings">Settings</div>
+  </div>
+
+<div id="app-toast" class="hidden"></div>
+<div id="digit-entry" class="hidden"></div>
+
+<script src="js/core.js"></script>
+<script src="js/parsers.js"></script>
+<script src="js/player.js"></script>
+<script src="js/net.js"></script>
+<script src="js/store.js"></script>
+<script src="js/epg.js"></script>
+<script src="js/vod.js"></script>
+<script src="js/ui-shell.js"></script>
+<script src="js/ui-pin.js"></script>
+<script src="js/ui-playback.js"></script>
+<script src="js/ui-channels.js"></script>
+<script src="js/ui-guide.js"></script>
+<script src="js/ui-schedule.js"></script>
+<script src="js/ui-search.js"></script>
+<script src="js/ui-vod.js"></script>
+<script src="js/ui-settings.js"></script>
+<script src="js/ui-playlists.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>

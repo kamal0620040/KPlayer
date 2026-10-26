@@ -1,0 +1,26 @@
+# Build outputs
+Debug/
+Release/
+dist/
+*.wgt
+*.wgt.stale
+
+# Tizen Studio workspace / device data
+.tizen-rds/
+
+# Editor
+.vscode/
+
+# QA rig artifacts (browser profiles, screenshots, test output)
+qa/node_modules/
+qa/profile-*/
+qa/shots/
+qa/shots-sim/
+qa/shots-vod/
+qa/results.json
+qa/console.json
+
+# OS junk
+Thumbs.db
+Desktop.ini
+.DS_Store

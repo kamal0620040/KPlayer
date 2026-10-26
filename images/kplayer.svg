@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="KPlayer">
+  <defs>
+    <clipPath id="k-top"><rect x="0" y="0" width="512" height="256"/></clipPath>
+    <clipPath id="k-bottom"><rect x="0" y="256" width="512" height="256"/></clipPath>
+  </defs>
+  <rect width="512" height="512" rx="112" fill="#0e1116"/>
+  <g clip-path="url(#k-top)">
+    <rect x="138" y="120" width="68" height="272" rx="34" fill="#f7f9fc"/>
+    <path d="M206 256 L354 130" fill="none" stroke="#f7f9fc" stroke-width="66" stroke-linecap="round"/>
+    <path d="M206 256 L354 382" fill="none" stroke="#f7f9fc" stroke-width="66" stroke-linecap="round"/>
+  </g>
+  <g clip-path="url(#k-bottom)">
+    <rect x="138" y="120" width="68" height="272" rx="34" fill="#4f8dff"/>
+    <path d="M206 256 L354 130" fill="none" stroke="#4f8dff" stroke-width="66" stroke-linecap="round"/>
+    <path d="M206 256 L354 382" fill="none" stroke="#4f8dff" stroke-width="66" stroke-linecap="round"/>
+  </g>
+</svg>

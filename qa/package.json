@@ -1,0 +1,12 @@
+{
+  "name": "kplayer-qa",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Headless QA driver for the KPlayer Tizen app",
+  "scripts": {
+    "drive": "node drive.js"
+  },
+  "dependencies": {
+    "puppeteer-core": "^24.0.0"
+  }
+}
