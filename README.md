@@ -5,7 +5,7 @@
 
 </div>
 
-KPlayer is a native-ish web app for Samsung Tizen TVs that turns your playlist provider into a clean, fast, 10-foot UI. It streams live TV and VOD from your own [M3U](https://en.wikipedia.org/wiki/M3U) links, [Xtream Codes](https://xtreamcodes.org) accounts or shared JSON lists, with a full-screen guide, categories, favorites, search and a TV-first remote-control flow.
+KPlayer is a lightweight web app for Samsung Tizen TVs that turns your playlist provider into a clean, fast, 10-foot UI. It streams live TV and VOD from your own [M3U](https://en.wikipedia.org/wiki/M3U) links, [Xtream Codes](https://xtreamcodes.org) accounts or shared JSON lists, with a full-screen guide, categories, favorites, search and a TV-first remote-control flow.
 
 No account, no telemetry, no third-party service in between: the app talks straight to your provider with plain HTTP from inside the TV.
 
@@ -189,8 +189,6 @@ They run against a local mock server (`qa/server.js`) that fakes an Xtream provi
 - [ ] Catch-up playback with guide integration for providers that support it
 - [ ] More themes and deeper logo fallbacks
 
-## Credits and legal
-
-KPlayer by [keshab](https://github.com/keshab). Icons are original SVG. Font is Rwanda via Google Fonts, included locally.
+## Legal
 
 This app does NOT provide any TV channels or content. You supply your own playlist from a provider you are entitled to use. Do not use it to pirate streams. Samsung, Tizen and all product names are trademarks of their respective owners.
